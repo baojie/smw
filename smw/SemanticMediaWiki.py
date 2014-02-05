@@ -17,6 +17,7 @@ import mwclient
 from bs4 import BeautifulSoup, Comment
 from enum import Enum
 
+
 class WikiHTTPPool(mwclient.http.HTTPPool):
     header_auth = {}
 
@@ -53,7 +54,7 @@ class WikiHTTPPool(mwclient.http.HTTPPool):
 
 
 smw_error = Enum(
-    'NONE' ,
+    'NONE',
     'HTTP_UNKNOWN',
     'DOMAIN',
     'PATH',
@@ -62,6 +63,8 @@ smw_error = Enum(
     'MW_API',
     'NO_SMW'
 )
+
+
 class SemanticMediaWiki(object):
     site = None  # mwclient.Site
     conn = None
@@ -73,34 +76,34 @@ class SemanticMediaWiki(object):
                  http_login=None, http_pass=None,
                  wiki_login=None, wiki_pass=None):
 
-
         try:
             self.site = mwclient.Site(host, path,
                                       pool=WikiHTTPPool(http_login, http_pass))
             self.conn = self.site.connection.find_connection(host)
-            #print self.site.connection
-            #print self.site.connection.__class__.__name__
-            assert isinstance(self.conn, mwclient.http.HTTPPersistentConnection)
+            # print self.site.connection
+            # print self.site.connection.__class__.__name__
+            assert isinstance(
+                self.conn, mwclient.http.HTTPPersistentConnection)
         except socket.error as e:
-            #print "domain error: {}".format(host),  e
+            # print "domain error: {}".format(host),  e
             self.wiki_status = smw_error.DOMAIN
             return
         except mwclient.errors.HTTPStatusError as e:
-            status, res = e # int, httplib.HTTPResponse
-            #print res.msg
-            #print res.reason
+            status, res = e  # int, httplib.HTTPResponse
+            # print res.msg
+            # print res.reason
             if status == 404:
-                #print "wiki url error: {}{}".format(host,path),  res.reason
+                # print "wiki url error: {}{}".format(host,path),  res.reason
                 self.wiki_status = smw_error.PATH
             elif status == 401:
-                #print "http user/password wrong"
+                # print "http user/password wrong"
                 self.wiki_status = smw_error.HTTP_AUTH
-            else :
-                #print e
+            else:
+                # print e
                 self.wiki_status = smw_error.HTTP_UNKNOWN
             return
         except ValueError as e:
-            #traceback.print_exc()
+            # traceback.print_exc()
             self.wiki_status = smw_error.MW_API
             return
 
@@ -134,13 +137,12 @@ class SemanticMediaWiki(object):
         result = self.parse(wiki_text)
         html_raw = result['text']['*']
         soup = BeautifulSoup(html_raw)
-        comments = soup.findAll(text=lambda text:isinstance(text, Comment))
+        comments = soup.findAll(text=lambda text: isinstance(text, Comment))
         for comment in comments:
             comment.extract()
         return soup
-        #print soup.encode_contents()
-        #return unicode.join(u'',map(unicode,soup))
-
+        # print soup.encode_contents()
+        # return unicode.join(u'',map(unicode,soup))
 
     def get_data(self, ask_query, format=None):
         """
@@ -155,9 +157,9 @@ class SemanticMediaWiki(object):
         format is 'json' or None (default return as string)
         """
         try:
-            #result = self.parse(ask_query)
-            #html = result['text']['*']
-            #soup = BeautifulSoup(html)
+            # result = self.parse(ask_query)
+            # html = result['text']['*']
+            # soup = BeautifulSoup(html)
             soup = self.parse_clean(ask_query)
             path = soup.find('a').get('href')
             # print path
@@ -166,7 +168,7 @@ class SemanticMediaWiki(object):
                 data = json.loads(data)
             return data, path
         except Exception as e:
-            #traceback.print_exc()
+            # traceback.print_exc()
             print
 
         return None
@@ -176,7 +178,7 @@ class SemanticMediaWiki(object):
         get metadata of a page in RDF
         """
 
-        #page = self.site.Pages['Special:ExportRDF/'+page]
+        # page = self.site.Pages['Special:ExportRDF/'+page]
         # return page.get_expanded()
 
         # this is just a hack. some sites may not have "index.php".
@@ -192,9 +194,9 @@ class SemanticMediaWiki(object):
     def get_smw_version(self):
         if self.site:
             results = self.site.api(action='query',
-                            meta='siteinfo',
-                            siprop='extensions',
-                            format='json')
+                                    meta='siteinfo',
+                                    siprop='extensions',
+                                    format='json')
             extensions = results['query']['extensions']
             for ext in extensions:
                 if ext['name'] == 'Semantic MediaWiki':

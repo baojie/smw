@@ -22,7 +22,7 @@ setup(
     license='License :: OSI Approved :: Python Software Foundation License',
     #py_modules=['foobar', ],
     packages=['smw'],
-    version='0.1',
+    version='0.1.1',
     install_requires=[
         'mwclient>=0.7dev',
         'rdflib',

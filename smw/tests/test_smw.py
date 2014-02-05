@@ -10,24 +10,25 @@ import unittest
 from SemanticMediaWiki import SemanticMediaWiki, smw_error
 
 config = {
-    "host"           : "www.foo.com",
-    "path"           : "/wiki/",
-    "http_login"     : None,
-    "http_pass"      : None,
-    "wiki_login"     : None,
-    "wiki_pass"      : None,
+    "host": "www.foo.com",
+    "path": "/wiki/",
+    "http_login": None,
+    "http_pass": None,
+    "wiki_login": None,
+    "wiki_pass": None,
 }
 
 wiki = SemanticMediaWiki(
-    host       = config["host"],
-    path       = config["path"],
-    http_login = config["http_login"],
-    http_pass  = config["http_pass"],
-    wiki_login = config["wiki_login"],
-    wiki_pass  = config["wiki_pass"])
+    host=config["host"],
+    path=config["path"],
+    http_login=config["http_login"],
+    http_pass=config["http_pass"],
+    wiki_login=config["wiki_login"],
+    wiki_pass=config["wiki_pass"])
 
 TEST_PAGE_NAME = 'Semantic MediaWiki Python Binding Test Page'
 TEST_PAGE_CONTENT = '[[SMW_PYTHON_TEST::test]]'
+
 
 class TestSemanticMediaWiki(unittest.TestCase):
 
@@ -47,7 +48,8 @@ class TestSemanticMediaWiki(unittest.TestCase):
         page = wiki.site.Pages[TEST_PAGE_NAME]
         text = page.edit()
         if text != TEST_PAGE_CONTENT:
-            page.save(TEST_PAGE_CONTENT, summary = 'SMW Python test edit in test_add_page')
+            page.save(
+                TEST_PAGE_CONTENT, summary='SMW Python test edit in test_add_page')
 
     @staticmethod
     def __dump(json_data):
@@ -63,9 +65,8 @@ class TestSemanticMediaWiki(unittest.TestCase):
         assert '*' in result['text']
         assert '<b>Hello</b>' in result['text']['*']
         result =  wiki.parse_clean("'''Hello'''")
-        result_html =  u''.join(result.encode_contents().splitlines())
+        result_html = u''.join(result.encode_contents().splitlines())
         assert '<html><body><p><b>Hello</b></p></body></html>' == result_html
-
 
     def test_get_data_ver_1_8(self):
         """
@@ -73,7 +74,7 @@ class TestSemanticMediaWiki(unittest.TestCase):
 
         there is a result format change 1.7 -> 1.8
         """
-        version =  wiki.get_smw_version()
+        version = wiki.get_smw_version()
         assert version
         if self.__versiontuple(version) < self.__versiontuple("1.8.0"):
             return
@@ -91,12 +92,12 @@ class TestSemanticMediaWiki(unittest.TestCase):
         res = wiki.get_data(query, format='json')
         assert res
         [query_result, query_path] = res
-        #self.__dump(query_result)
+        # self.__dump(query_result)
         assert query_result
         assert query_result['rows'] == 1
         assert TEST_PAGE_NAME in query_result['results']
 
-        #print wiki.unescapeSMW(query_path)
+        # print wiki.unescapeSMW(query_path)
 
     def test_get_smw_version(self):
         "if fail, SMW may not be installed"
@@ -109,15 +110,16 @@ class TestSemanticMediaWiki(unittest.TestCase):
         g.parse(data=rdf, format="application/rdf+xml")
         nsg = g.namespace_manager
         triples = []
-        for s,p,o in g:
-            s,p,o = map(nsg.normalizeUri, [s,p,o])
-            triples.append("{} {} {}".format(s ,p,o))
-        assert 'wiki:{} wiki:Property-3ASMW_PYTHON_TEST wiki:Test'.format(page_name) in triples
+        for s, p, o in g:
+            s, p, o = map(nsg.normalizeUri, [s, p, o])
+            triples.append("{} {} {}".format(s, p, o))
+        assert 'wiki:{} wiki:Property-3ASMW_PYTHON_TEST wiki:Test'.format(
+            page_name) in triples
 
     def test_getJSON(self):
         page_name = TEST_PAGE_NAME.replace(' ', '_')
         json_data = wiki.getJSON(page_name)
-        #self.__dump(json_data)
+        # self.__dump(json_data)
         assert json_data['rdfs_label'] == TEST_PAGE_NAME
         assert json_data['SMW_PYTHON_TEST'] == 'Test'
 
