@@ -26,7 +26,8 @@ setup(
     install_requires=[
         'mwclient>=0.7dev',
         'rdflib',
-        'beautifulsoup4'
+        'beautifulsoup4',
+        'enum'
         ],
     dependency_links=[
         "git+https://github.com/mwclient/mwclient.git@master#egg=mwclient-0.7dev"

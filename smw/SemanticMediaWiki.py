@@ -1,25 +1,30 @@
 """
 Semantic MediaWiki wrapper
 
-2013-08-12: first package relase
+2013-08-12: first package internal release
+2014-02-04: 0.1 release
 """
 
-import mwclient
 import string
 import base64
-import rdflib
 import urllib2
+import traceback
+import socket
+import json
 
-from bs4 import BeautifulSoup
-
+import rdflib
+import mwclient
+from bs4 import BeautifulSoup, Comment
+from enum import Enum
 
 class WikiHTTPPool(mwclient.http.HTTPPool):
     header_auth = {}
 
     def __init__(self, http_login, http_pass):
-        token = http_login + ':' + http_pass
-        auth = 'Basic ' + string.strip(base64.encodestring(token))
-        self.header_auth['Authorization'] = auth
+        if http_login and http_pass:
+            token = http_login + ':' + http_pass
+            auth = 'Basic ' + string.strip(base64.encodestring(token))
+            self.header_auth['Authorization'] = auth
 
         super(WikiHTTPPool, self).__init__()
 
@@ -47,28 +52,70 @@ class WikiHTTPPool(mwclient.http.HTTPPool):
                                                  self.updateHeader(headers), data, raise_on_not_ok, auto_redirect)
 
 
+smw_error = Enum(
+    'NONE' ,
+    'HTTP_UNKNOWN',
+    'DOMAIN',
+    'PATH',
+    'HTTP_AUTH',
+    'WIKI_AUTH',
+    'MW_API',
+    'NO_SMW'
+)
 class SemanticMediaWiki(object):
-
     site = None  # mwclient.Site
     conn = None
     rdf_store = None
     rdf_session = None
+    wiki_status = smw_error.NONE
 
     def __init__(self, host, path="/",
                  http_login=None, http_pass=None,
                  wiki_login=None, wiki_pass=None):
 
-        self.site = mwclient.Site(host, path,
-                                  pool=WikiHTTPPool(http_login, http_pass))
-        self.site.login(wiki_login, wiki_pass)
 
-        # print self.site.connection
-        # print self.site.connection.__class__.__name__
+        try:
+            self.site = mwclient.Site(host, path,
+                                      pool=WikiHTTPPool(http_login, http_pass))
+            self.conn = self.site.connection.find_connection(host)
+            #print self.site.connection
+            #print self.site.connection.__class__.__name__
+            assert isinstance(self.conn, mwclient.http.HTTPPersistentConnection)
+        except socket.error as e:
+            #print "domain error: {}".format(host),  e
+            self.wiki_status = smw_error.DOMAIN
+            return
+        except mwclient.errors.HTTPStatusError as e:
+            status, res = e # int, httplib.HTTPResponse
+            #print res.msg
+            #print res.reason
+            if status == 404:
+                #print "wiki url error: {}{}".format(host,path),  res.reason
+                self.wiki_status = smw_error.PATH
+            elif status == 401:
+                #print "http user/password wrong"
+                self.wiki_status = smw_error.HTTP_AUTH
+            else :
+                #print e
+                self.wiki_status = smw_error.HTTP_UNKNOWN
+            return
+        except ValueError as e:
+            #traceback.print_exc()
+            self.wiki_status = smw_error.MW_API
+            return
 
-        self.conn = self.site.connection.find_connection(host)
-        # print self.conn
-        # print self.conn.__class__.__name__
-        #assert isinstance(self.conn, HTTPPersistentConnection)
+        try:
+            self.site.login(wiki_login, wiki_pass)
+            if not self.site.credentials:
+                print "wiki login or password wrong"
+                self.wiki_status = smw_error.WIKI_AUTH
+        except mwclient.errors.LoginError as e:
+            self.wiki_status = smw_error.WIKI_AUTH
+            return
+
+        smw_version = self.get_smw_version()
+        if not smw_version:
+            self.wiki_status = smw_error.NO_SMW
 
     def get(self, path):
         """
@@ -83,7 +130,19 @@ class SemanticMediaWiki(object):
     def parse(self, wiki_text):
         return self.site.parse(wiki_text)
 
-    def get_data(self, ask_query):
+    def parse_clean(self, wiki_text):
+        result = self.parse(wiki_text)
+        html_raw = result['text']['*']
+        soup = BeautifulSoup(html_raw)
+        comments = soup.findAll(text=lambda text:isinstance(text, Comment))
+        for comment in comments:
+            comment.extract()
+        return soup
+        #print soup.encode_contents()
+        #return unicode.join(u'',map(unicode,soup))
+
+
+    def get_data(self, ask_query, format=None):
         """
         ask_query is a SMW ask query in one of the data export format.
 
@@ -92,21 +151,31 @@ class SemanticMediaWiki(object):
 
         A link will be generated from the query. This function parse the link
         and read the content of the link
+
+        format is 'json' or None (default return as string)
         """
         try:
-            result = self.parse(ask_query)
-            html = result['text']['*']
-            soup = BeautifulSoup(html)
+            #result = self.parse(ask_query)
+            #html = result['text']['*']
+            #soup = BeautifulSoup(html)
+            soup = self.parse_clean(ask_query)
             path = soup.find('a').get('href')
             # print path
             data = self.get(path)
+            if format == 'json':
+                data = json.loads(data)
             return data, path
         except Exception as e:
-            print e
+            #traceback.print_exc()
+            print
 
         return None
 
     def getRDF(self, page):
+        """
+        get metadata of a page in RDF
+        """
+
         #page = self.site.Pages['Special:ExportRDF/'+page]
         # return page.get_expanded()
 
@@ -120,13 +189,27 @@ class SemanticMediaWiki(object):
         url = url.replace("-", "%")
         return urllib2.unquote(url)
 
+    def get_smw_version(self):
+        if self.site:
+            results = self.site.api(action='query',
+                            meta='siteinfo',
+                            siprop='extensions',
+                            format='json')
+            extensions = results['query']['extensions']
+            for ext in extensions:
+                if ext['name'] == 'Semantic MediaWiki':
+                    return ext['version']
+
+        return None
+
     def getJSON(self, page):
-        # print page
+        """
+        get metadata of a page in JSON
+        """
 
         # percent-encode url name
         qPage = urllib2.quote(page.encode('utf-8'), safe='')
         rdf = self.getRDF(qPage)
-        # print rdf
 
         g = rdflib.Graph()
         g.parse(data=rdf, format="application/rdf+xml")

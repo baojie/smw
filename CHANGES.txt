@@ -1,1 +1,14 @@
-v0.1, 2013-04-03 -- Initial release.
+v0.1.1 2014-01-05
+* bugfix: http auth now is optional
+* improvement: track auth and login errors in 'wiki_status' field
+* improvement: get_data() now has a 'json' formatting option
+* improvement: unit tests
+* feature: parse_clean() -- parse wiki script parsing result with beautifulsoup, remove comments
+* feature: get_smw_version()
+
+v0.1, 2014-02-04 0.1 publish release
+* access wiki with http user/password protection
+* parse ask query and get result in json, csv, dsv, rss, rdf, etc.
+* get metadata of a page in RDF or JSON
+
+2013-04-03 -- Initial release.
