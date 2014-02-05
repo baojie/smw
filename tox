@@ -1,0 +1,19 @@
+#!/bin/bash
+set -e
+if [ -z "$VIRTUAL_ENV" ]
+then
+    virtualenv .tox/tox
+    cd .tox/tox
+    source bin/activate
+    #exit 1
+fi
+
+if [ -z "$VIRTUAL_ENV" ]
+then
+    echo This script should only be run inside a virtual_env.
+    exit 1
+fi
+
+pip install tox pytest pytest-cov
+
+tox
