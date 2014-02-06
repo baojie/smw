@@ -1,10 +1,10 @@
-v0.1.2dev
+v0.1.2 2014-02-06
 * bugfix: serialize RDF literal object
 * improvement: usage examples in README.md
 * improvement: test config file moved to ~/.smwrc
 * feature: static factory method: from_config()
 
-v0.1.1 2014-01-05
+v0.1.1 2014-02-05
 * bugfix: http auth now is optional
 * improvement: track auth and login errors in 'wiki_status' field
 * improvement: get_data() now has a 'json' formatting option

@@ -1,28 +1,13 @@
 #!/usr/bin/env python
 
 from setuptools import setup
-import sys
-from setuptools.command.test import test as TestCommand
-
-
-class PyTest(TestCommand):
-    def finalize_options(self):
-        TestCommand.finalize_options(self)
-        self.test_args = []
-        self.test_suite = True
-
-    def run_tests(self):
-        #import here, cause outside the eggs aren't loaded
-        import pytest
-        errno = pytest.main(self.test_args)
-        sys.exit(errno)
 
 setup(
     name='smw',
     license='License :: OSI Approved :: Python Software Foundation License',
     #py_modules=['foobar', ],
     packages=['smw'],
-    version='0.1.1',
+    version='0.1.2',
     install_requires=[
         'mwclient>=0.7dev',
         'rdflib',
@@ -32,8 +17,8 @@ setup(
     dependency_links=[
         "git+https://github.com/mwclient/mwclient.git@master#egg=mwclient-0.7dev"
         ],
-    #tests_require=['pytest','pytest-xdist'],
-    cmdclass={'test': PyTest},
+    tests_require=[],
+    cmdclass={},
 
     description='Semantic Mediawiki Python Binding',
     long_description=open('README.md').read(),

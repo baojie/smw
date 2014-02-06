@@ -118,36 +118,12 @@ class TestSemanticMediaWiki(unittest.TestCase):
     def test_list(self):
         assert wiki.list(prefix=TEST_PAGE_NAME)
 
-"""
-pub in ~/.smwrc
-
-config = {
-    "host": "www.foo.com",
-    "path": "/wiki/",
-    "http_login": null,
-    "http_pass": null,
-    "wiki_login": null,
-    "wiki_pass": null
-}
-"""
 if __name__ == "__main__":
-    from os.path import expanduser, join
-    config_file = join(expanduser("~"), '.smwrc')
-    try:
-        with open(config_file, 'r') as f:
-            config = json.load(f)
-    except IOError:
-        print config_file, "does not exist"
-        exit()
-    except ValueError:
-        print config_file, "is not a valid json"
-        exit()
+    global wiki
+    wiki = SemanticMediaWiki.from_config()
 
     print "test with following config"
-    print config
-
-    global wiki
-    wiki = SemanticMediaWiki.from_config(config)
+    print wiki.config
 
     TestSemanticMediaWiki._test_connection()
     TestSemanticMediaWiki._init_test_page()

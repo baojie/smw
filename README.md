@@ -35,6 +35,10 @@ wiki = SemanticMediaWiki(
     wiki_login=config["wiki_login"],
     wiki_pass=config["wiki_pass"])
 
+# or from a config file
+# default ~/.smwrc
+wiki = SemanticMediaWiki.from_config()
+
 query = r"""
 {{#ask:
     [[SMW_PYTHON_TEST::+]]
@@ -60,5 +64,10 @@ json_data = wiki.getJSON(page_name)
 
 # parse any wiki script
 result = wiki.parse("'''Hello'''")
+
+# get raw page
+# this useful when query is composed on Special:Ask
+html = wiki.get('/wiki/Main_Page')
+json_result = wiki.get('/wiki/index.php?title=Special:Ask&q=[[Category:People]]&p[format]=json')
 
 ```

@@ -17,7 +17,7 @@ import rdflib
 import mwclient
 from bs4 import BeautifulSoup, Comment
 from enum import Enum
-
+from os.path import expanduser, join
 
 class HTTPPoolWithAuth(mwclient.http.HTTPPool):
     header_auth = {}
@@ -72,9 +72,35 @@ class SemanticMediaWiki(object):
     rdf_store = None
     rdf_session = None
     wiki_status = smw_error.NONE
+    config = None
+
+    """
+    default config file is in ~/.smwrc
+
+    config = {
+        "host": "www.foo.com",
+        "path": "/wiki/",
+        "http_login": null,
+        "http_pass": null,
+        "wiki_login": null,
+        "wiki_pass": null
+    }
+    """
 
     @staticmethod
-    def from_config(config):
+    def from_config(config=None):
+        if not config:
+            config_file = join(expanduser("~"), '.smwrc')
+            try:
+                with open(config_file, 'r') as f:
+                    config = json.load(f)
+            except IOError:
+                print config_file, "does not exist"
+                return None
+            except ValueError:
+                print config_file, "is not a valid json"
+                return None
+
         wiki = SemanticMediaWiki(
             host = config["host"],
             path = config.get("path", '/'),
@@ -87,7 +113,14 @@ class SemanticMediaWiki(object):
     def __init__(self, host, path="/",
                  http_login=None, http_pass=None,
                  wiki_login=None, wiki_pass=None):
-
+        self.config = {
+            "host": host,
+            "path": path,
+            "http_login": http_login,
+            "http_pass": http_pass,
+            "wiki_login": wiki_login,
+            "wiki_pass": wiki_login
+        }
         try:
             self.site = mwclient.Site(host, path,
                                       pool=HTTPPoolWithAuth(http_login, http_pass))
