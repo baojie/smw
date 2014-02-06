@@ -16,6 +16,8 @@ Or install from github
 ### Usage example
 
 ```python
+from smw.SemanticMediaWiki import SemanticMediaWiki
+
 # change this to your wiki's config
 config = {
     "host": "www.foo.com",
