@@ -3,9 +3,9 @@
 
 Sematic MediaWiki Python binding
 
-This packages depends on the mwclient 0.7 development version
+This package depends on the mwclient 0.7 development version
 
->https://github.com/mwclient/mwclient.git
+> https://github.com/mwclient/mwclient.git
  
 To install (will install mwclient 0.7dev automatically)
 > pip install smw
@@ -13,7 +13,7 @@ To install (will install mwclient 0.7dev automatically)
 Or install from github
 > pip install git+git://github.com/baojie/smw.git
 
-Usage example
+### Usage example
 
 ```python
 # change this to your wiki's config
