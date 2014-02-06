@@ -36,7 +36,7 @@ setup(
     cmdclass={'test': PyTest},
 
     description='Semantic Mediawiki Python Binding',
-    long_description=open('README.txt').read(),
+    long_description=open('README.md').read(),
 
     author='Jie Bao',
     author_email='baojie@gmail.com',
