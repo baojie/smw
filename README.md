@@ -1,7 +1,9 @@
 ## Semantic MediaWiki
 
 
-Sematic MediaWiki Python binding
+[Sematic MediaWiki](http://semantic-mediawiki.org/) Python binding
+
+(http://upload.wikimedia.org/wikipedia/commons/a/ac/SemanticMediaWiki_Logo.png =100x 'SMW icon')
 
 This package depends on the mwclient 0.7 development version
 
