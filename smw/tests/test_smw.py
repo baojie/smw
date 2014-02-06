@@ -123,6 +123,10 @@ class TestSemanticMediaWiki(unittest.TestCase):
         assert json_data['rdfs_label'] == TEST_PAGE_NAME
         assert json_data['SMW_PYTHON_TEST'] == 'Test'
 
+    def test_list(self):
+        assert wiki.list(prefix=TEST_PAGE_NAME)
+
+
 if __name__ == "__main__":
     print "test with following config"
     print config

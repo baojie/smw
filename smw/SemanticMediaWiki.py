@@ -7,6 +7,7 @@ Semantic MediaWiki wrapper
 
 import string
 import base64
+import urllib
 import urllib2
 import traceback
 import socket
@@ -258,3 +259,25 @@ class SemanticMediaWiki(object):
         # @TODO: handle internal objects
 
         return json_object
+
+    def list(self, prefix=None):
+        """"
+        list page with given prefix. up to 5000 pages may be returned
+
+        site.allpages() fails on wiki runs on HHVM
+        #allpages = list(wiki.site.allpages(prefix='Foo-'))
+        """"
+        para = {
+            "action": 'query',
+            'list': 'allpages',
+            'format': 'json',
+            'aplimit': '5000'
+        }
+        if prefix:
+            para['apprefix'] = prefix
+        url =  self.site.path +  r"api.php?" + urllib.urlencode(para)
+        r = self.get(url)
+        r = json.loads(r)
+        r = r['query']['allpages']
+        allpages = [p['title'] for p in r]
+        return allpages
