@@ -1,3 +1,6 @@
+v0.1.3dev
+* API breaking change: from_config) -- input is a file name, no more a dict object
+
 v0.1.2 2014-02-06
 * bugfix: serialize RDF literal object
 * improvement: usage examples in README.md
