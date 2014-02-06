@@ -239,13 +239,13 @@ class SemanticMediaWiki(object):
                 property = property.replace("wiki:Property:", "", 1)
             if isinstance(o,  rdflib.URIRef):
                 if property in ["swivt:page", "rdfs:isDefinedBy"]:
-                    object = o
+                    object = str(o)
                 else:
                     object = self.unescapeSMW(nsg.normalizeUri(o))
                     if object.startswith("wiki:"):
                         object = object.replace("wiki:", "", 1)
             else:
-                object = o
+                object = str(o)
 
             if property.startswith("swivt:specialProperty"):
                 continue
@@ -261,12 +261,12 @@ class SemanticMediaWiki(object):
         return json_object
 
     def list(self, prefix=None):
-        """"
+        """
         list page with given prefix. up to 5000 pages may be returned
 
         site.allpages() fails on wiki runs on HHVM
         #allpages = list(wiki.site.allpages(prefix='Foo-'))
-        """"
+        """
         para = {
             "action": 'query',
             'list': 'allpages',

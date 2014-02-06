@@ -1,5 +1,7 @@
 v0.1.2dev
 * usage examples in README.md
+* bugfix: serialize RDF literal object
+* config file moved to ~/.smwrc
 
 v0.1.1 2014-01-05
 * bugfix: http auth now is optional
