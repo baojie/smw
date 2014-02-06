@@ -71,4 +71,11 @@ result = wiki.parse("'''Hello'''")
 html = wiki.get('/wiki/Main_Page')
 json_result = wiki.get('/wiki/index.php?title=Special:Ask&q=[[Category:People]]&p[format]=json')
 
+# add semantic annotations
+page = wiki.site.Pages['SnowWhite']
+old_content = page.edit()
+new_content = old_content + "[[Category:Princess]][[friend of::Grumpy]]"
+page.save(new_content)
+
+
 ```
