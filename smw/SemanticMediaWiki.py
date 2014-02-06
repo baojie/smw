@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup, Comment
 from enum import Enum
 
 
-class WikiHTTPPool(mwclient.http.HTTPPool):
+class HTTPPoolWithAuth(mwclient.http.HTTPPool):
     header_auth = {}
 
     def __init__(self, http_login, http_pass):
@@ -28,7 +28,7 @@ class WikiHTTPPool(mwclient.http.HTTPPool):
             auth = 'Basic ' + string.strip(base64.encodestring(token))
             self.header_auth['Authorization'] = auth
 
-        super(WikiHTTPPool, self).__init__()
+        super(HTTPPoolWithAuth, self).__init__()
 
     def updateHeader(self,  headers=None):
         if headers:
@@ -38,19 +38,19 @@ class WikiHTTPPool(mwclient.http.HTTPPool):
         return headers
 
     def get(self, host, path, headers=None):
-        return super(WikiHTTPPool, self).get(host, path,
+        return super(HTTPPoolWithAuth, self).get(host, path,
                                              self.updateHeader(headers))
 
     def post(self, host, path, headers=None, data=None):
-        return super(WikiHTTPPool, self).post(host, path,
+        return super(HTTPPoolWithAuth, self).post(host, path,
                                               self.updateHeader(headers), data)
 
     def head(self, host, path, headers=None, auto_redirect=False):
-        return super(WikiHTTPPool, self).head(host, path,
+        return super(HTTPPoolWithAuth, self).head(host, path,
                                               self.updateHeader(headers), auto_redirect)
 
     def request(self, method, host, path, headers, data, raise_on_not_ok, auto_redirect):
-        return super(WikiHTTPPool, self).request(method, host, path,
+        return super(HTTPPoolWithAuth, self).request(method, host, path,
                                                  self.updateHeader(headers), data, raise_on_not_ok, auto_redirect)
 
 
@@ -73,13 +73,24 @@ class SemanticMediaWiki(object):
     rdf_session = None
     wiki_status = smw_error.NONE
 
+    @staticmethod
+    def from_config(config):
+        wiki = SemanticMediaWiki(
+            host = config["host"],
+            path = config.get("path", '/'),
+            http_login = config.get("http_login", None),
+            http_pass = config.get("http_pass", None),
+            wiki_login = config.get("wiki_login", None),
+            wiki_pass = config.get("wiki_pass", None))
+        return wiki
+
     def __init__(self, host, path="/",
                  http_login=None, http_pass=None,
                  wiki_login=None, wiki_pass=None):
 
         try:
             self.site = mwclient.Site(host, path,
-                                      pool=WikiHTTPPool(http_login, http_pass))
+                                      pool=HTTPPoolWithAuth(http_login, http_pass))
             self.conn = self.site.connection.find_connection(host)
             # print self.site.connection
             # print self.site.connection.__class__.__name__

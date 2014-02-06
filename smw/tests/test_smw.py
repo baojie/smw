@@ -147,13 +147,7 @@ if __name__ == "__main__":
     print config
 
     global wiki
-    wiki = SemanticMediaWiki(
-        host=config["host"],
-        path=config["path"],
-        http_login=config["http_login"],
-        http_pass=config["http_pass"],
-        wiki_login=config["wiki_login"],
-        wiki_pass=config["wiki_pass"])
+    wiki = SemanticMediaWiki.from_config(config)
 
     TestSemanticMediaWiki._test_connection()
     TestSemanticMediaWiki._init_test_page()
