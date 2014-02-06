@@ -88,18 +88,26 @@ class SemanticMediaWiki(object):
     """
 
     @staticmethod
-    def from_config(config=None):
-        if not config:
+    def from_config(config_file=None):
+        """
+        config_file is path to config file (json)
+        """
+        if not config_file:
             config_file = join(expanduser("~"), '.smwrc')
-            try:
-                with open(config_file, 'r') as f:
-                    config = json.load(f)
-            except IOError:
-                print config_file, "does not exist"
-                return None
-            except ValueError:
-                print config_file, "is not a valid json"
-                return None
+        
+        config = None
+        try:
+            with open(config_file, 'r') as f:
+                config = json.load(f)
+        except IOError:
+            print config_file, "does not exist"
+            return None
+        except ValueError:
+            print config_file, "is not a valid json"
+            return None
+        
+        if not config:
+            return None
 
         wiki = SemanticMediaWiki(
             host = config["host"],
