@@ -1,3 +1,6 @@
+v0.1.2dev
+* usage examples in README.md
+
 v0.1.1 2014-01-05
 * bugfix: http auth now is optional
 * improvement: track auth and login errors in 'wiki_status' field

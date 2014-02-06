@@ -49,4 +49,16 @@ res = wiki.get_data(query, format='json')
 items = query_result['results']
 for page in query_result['results']:
     print items[page]
+
+page_name = 'Foo'
+
+# get page metadata in RDF/XML
+rdf = wiki.getRDF(page_name)
+
+# get page metadata in JSON, simplified for human readability
+json_data = wiki.getJSON(page_name)
+
+# parse any wiki script
+result = wiki.parse("'''Hello'''")
+
 ```
