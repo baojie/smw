@@ -3,7 +3,7 @@
 
 [Sematic MediaWiki](http://semantic-mediawiki.org/) Python binding
 
-![SMW icon](http://upload.wikimedia.org/wikipedia/commons/a/ac/SemanticMediaWiki_Logo.png =100x)
+<img src="http://upload.wikimedia.org/wikipedia/commons/a/ac/SemanticMediaWiki_Logo.png" alt="SMW" style="width: 100px;"/>
 
 This package depends on the mwclient 0.7 development version
 
