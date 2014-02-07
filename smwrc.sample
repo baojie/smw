@@ -1,0 +1,8 @@
+{
+    "host": "www.foo.com",
+    "path": "/wiki/",
+    "http_login": null,
+    "http_pass": null,
+    "wiki_login": "john",
+    "wiki_pass": "somepassword"
+}
