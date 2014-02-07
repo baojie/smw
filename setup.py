@@ -21,7 +21,7 @@ setup(
     cmdclass={},
 
     description='Semantic Mediawiki Python Binding',
-    long_description=open('README.md').read(),
+    long_description=open('README.rst').read(),
 
     author='Jie Bao',
     author_email='baojie@gmail.com',
