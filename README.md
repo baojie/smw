@@ -39,6 +39,7 @@ wiki = SemanticMediaWiki(
 
 # or from a config file (json)
 # default ~/.smwrc
+# sample config  https://github.com/baojie/smw/blob/master/smwrc.sample
 wiki = SemanticMediaWiki.from_config()
 
 query = r"""
