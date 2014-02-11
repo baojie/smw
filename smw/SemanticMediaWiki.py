@@ -291,13 +291,13 @@ class SemanticMediaWiki(object):
                 property = property.replace("wiki:Property:", "", 1)
             if isinstance(o,  rdflib.URIRef):
                 if property in ["swivt:page", "rdfs:isDefinedBy"]:
-                    object = str(o)
+                    object = unicode(o)
                 else:
                     object = self.unescapeSMW(nsg.normalizeUri(o))
                     if object.startswith("wiki:"):
                         object = object.replace("wiki:", "", 1)
             else:
-                object = str(o)
+                object = unicode(o)
 
             if property.startswith("swivt:specialProperty"):
                 continue
