@@ -104,8 +104,7 @@ class TestSemanticMediaWiki(unittest.TestCase):
                 s, p = map(nsg.normalizeUri, [s, p])
             s, p, o = map(str, [s, p, o])
             triples.append("{} {} {}".format(s, p, o))
-        #assert 'wiki:{} wiki:Property-3ASMW_PYTHON_TEST wiki:Test'.format(
-        #    page_name) in triples
+        assert 'wiki:{} wiki:Property-3ASMW_PYTHON_TEST wiki:Test'.format(page_name) in triples
 
     def test_getJSON(self):
         page_name = TEST_PAGE_NAME.replace(' ', '_')

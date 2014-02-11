@@ -9,9 +9,11 @@ This package depends on the mwclient 0.7 development version
 > https://github.com/mwclient/mwclient.git
  
 To install (will install mwclient 0.7dev automatically)
+
 > pip install smw
  
 Or install from github
+
 > pip install git+git://github.com/baojie/smw.git
 
 ### Usage example
@@ -39,6 +41,7 @@ wiki = SemanticMediaWiki(
 
 # or from a config file (json)
 # default ~/.smwrc
+# sample config  https://github.com/baojie/smw/blob/master/smwrc.sample
 wiki = SemanticMediaWiki.from_config()
 
 query = r"""

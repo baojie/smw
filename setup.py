@@ -7,7 +7,7 @@ setup(
     license='License :: OSI Approved :: Python Software Foundation License',
     #py_modules=['foobar', ],
     packages=['smw'],
-    version='0.1.3',
+    version='0.1.3.1',
     install_requires=[
         'mwclient>=0.7dev',
         'rdflib',
@@ -21,7 +21,7 @@ setup(
     cmdclass={},
 
     description='Semantic Mediawiki Python Binding',
-    long_description=open('README.md').read(),
+    long_description=open('README.rst').read(),
 
     author='Jie Bao',
     author_email='baojie@gmail.com',
