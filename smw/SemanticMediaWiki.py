@@ -264,10 +264,10 @@ class SemanticMediaWiki(object):
 
         def add_property(json_obj, property, value):
             if property in json_obj:
-                if isinstance(json_obj['property'], list):
-                    json_obj['property'].append(value)
+                if isinstance(json_obj[property], list):
+                    json_obj[property].append(value)
                 else:
-                    json_obj['property'] = [json_obj['property'], value]
+                    json_obj[property] = [json_obj[property], value]
             else:
                 json_obj[property] = value
 
@@ -315,7 +315,7 @@ class SemanticMediaWiki(object):
             property = property.replace(":", "_")
 
             #
-            json_object[property] = object
+            #json_object[property] = object
             add_property(json_object, property, object)
             # print property, " == ",  object
             # print "===================="

@@ -1,5 +1,6 @@
 v0.1.4dev (unreleased)
 * bugfix: RDF literal maybe unicode
+* bugfix: RDF triple of the same property should be mapped to a list of values in JSON
 
 v0.1.3 2014-02-07
 * API breaking change: from_config) -- input is a file name, no more a dict object
