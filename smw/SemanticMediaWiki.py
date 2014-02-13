@@ -262,6 +262,15 @@ class SemanticMediaWiki(object):
         get metadata of a page in JSON
         """
 
+        def add_property(json_obj, property, value):
+            if property in json_obj:
+                if isinstance(json_obj['property'], list):
+                    json_obj['property'].append(value)
+                else:
+                    json_obj['property'] = [json_obj['property'], value]
+            else:
+                json_obj[property] = value
+
         # percent-encode url name
         qPage = urllib2.quote(page.encode('utf-8'), safe='')
         rdf = self.getRDF(qPage)
@@ -304,7 +313,10 @@ class SemanticMediaWiki(object):
             if (property == "rdf:type") and (object == "swivt:Subject"):
                 continue
             property = property.replace(":", "_")
+
+            #
             json_object[property] = object
+            add_property(json_object, property, object)
             # print property, " == ",  object
             # print "===================="
 
